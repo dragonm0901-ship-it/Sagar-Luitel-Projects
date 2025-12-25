@@ -1,0 +1,150 @@
+
+import { PoliticalParty, ProvinceData } from './types';
+
+export const PARTIES: PoliticalParty[] = [
+  {
+    id: 'p1',
+    nameEn: 'Nepali Congress',
+    nameNe: 'नेपाली कांग्रेस',
+    symbol: 'Tree',
+    color: '#34d399',
+    descriptionEn: 'Democratic socialist political party in Nepal.',
+    descriptionNe: 'नेपालको प्रजातान्त्रिक समाजवादी राजनीतिक दल।'
+  },
+  {
+    id: 'p2',
+    nameEn: 'CPN (UML)',
+    nameNe: 'नेकपा (एमाले)',
+    symbol: 'Sun',
+    color: '#f87171',
+    descriptionEn: 'Marxist–Leninist communist party in Nepal.',
+    descriptionNe: 'नेपालको मार्क्सवादी-लेनिनवादी कम्युनिस्ट पार्टी।'
+  },
+  {
+    id: 'p3',
+    nameEn: 'CPN (Maoist Centre)',
+    nameNe: 'नेकपा (माओवादी केन्द्र)',
+    symbol: 'Hammer',
+    color: '#ef4444',
+    descriptionEn: 'Revolutionary communist party led by Prachanda.',
+    descriptionNe: 'प्रचण्डको नेतृत्वमा रहेको क्रान्तिकारी कम्युनिस्ट पार्टी।'
+  },
+  {
+    id: 'p4',
+    nameEn: 'Rastriya Swatantra Party',
+    nameNe: 'राष्ट्रिय स्वतन्त्र पार्टी',
+    symbol: 'Bell',
+    color: '#60a5fa',
+    descriptionEn: 'A new reformist political party focusing on governance.',
+    descriptionNe: 'सुशासनमा केन्द्रित नयाँ सुधारवादी राजनीतिक दल।'
+  },
+  {
+    id: 'p5',
+    nameEn: 'Rastriya Prajatantra Party',
+    nameNe: 'राष्ट्रिय प्रजातन्त्र पार्टी',
+    symbol: 'Flag',
+    color: '#fbbf24',
+    descriptionEn: 'Right-wing pro-monarchy political party.',
+    descriptionNe: 'दायाँ पक्षीय संवैधानिक राजतन्त्रवादी राजनीतिक दल।'
+  },
+  {
+    id: 'p6',
+    nameEn: 'Independent Candidate',
+    nameNe: 'स्वतन्त्र उम्मेदवार',
+    symbol: 'Bat',
+    color: '#a78bfa',
+    descriptionEn: 'Non-affiliated independent representation.',
+    descriptionNe: 'कुनै पनि दलमा आबद्ध नभएको स्वतन्त्र प्रतिनिधित्व।'
+  }
+];
+
+export const PROVINCES: ProvinceData[] = [
+  { name: 'Koshi', turnout: 68, votes: 1250400 },
+  { name: 'Madhesh', turnout: 72, votes: 1840200 },
+  { name: 'Bagmati', turnout: 65, votes: 2105000 },
+  { name: 'Gandaki', turnout: 70, votes: 850300 },
+  { name: 'Lumbini', turnout: 67, votes: 1100200 },
+  { name: 'Karnali', turnout: 74, votes: 450100 },
+  { name: 'Sudurpashchim', turnout: 66, votes: 720400 }
+];
+
+export const TRANSLATIONS = {
+  EN: {
+    heroTitle: 'Voice of the Nation, Power of your Vote 2025.',
+    heroSub: 'The 2025 General Elections: Secure, Transparent, and Accessible digital voting for every Nepalese citizen.',
+    startVoting: 'Begin Voting Process',
+    verifyTitle: 'Voter Verification',
+    enterVoterId: 'Enter your 10-digit Voter ID',
+    idPlaceholder: 'e.g. 1234567890',
+    validate: 'Validate Identity',
+    otpTitle: 'Two-Factor Authentication',
+    otpSub: 'A secure 6-digit code has been sent to your registered mobile number ending in ****4567.',
+    resendOtp: 'Resend OTP',
+    wait: 'Wait',
+    verifyOtp: 'Verify & Continue',
+    ballotTitle: 'Digital Ballot Paper',
+    ballotSub: 'Please select one party/candidate. Your selection is encrypted and anonymous.',
+    confirmVote: 'Confirm Your Vote',
+    castVote: 'Cast My Vote',
+    cancel: 'Go Back',
+    successTitle: 'Vote Successfully Cast!',
+    successSub: 'Your 2025 General Election vote has been recorded on the secure ledger. Thank you for participating in democracy.',
+    receiptBtn: 'Download Digital Receipt',
+    resultsTitle: 'Live Election Monitoring',
+    integrityStatus: 'Blockchain Network: Synced & Secure',
+    turnout: 'National Turnout',
+    exploreResults: 'View Live Dashboard',
+    howItWorks: 'How it Works',
+    step1: 'Identify',
+    step1Desc: 'Enter your biometric voter credentials.',
+    step2: 'Authenticate',
+    step2Desc: 'Verify via secure mobile OTP or FaceID.',
+    step3: 'Vote',
+    step3Desc: 'Cast your vote in total anonymity.',
+    step4: 'Secure',
+    step4Desc: 'Your vote is hashed on the private ledger.',
+    identifyDetails: 'To ensure democratic integrity, every voter must provide a verified 10-digit Voter ID linked to their Citizenship certificate. Our system uses advanced zero-knowledge encryption to match your record against the National Identity Database without storing your personal identity alongside your vote.',
+    authenticateDetails: 'Multi-factor authentication (MFA) is mandatory for remote voting. We combine your registered mobile number (OTP) with real-time biometric verification. For users on mobile devices, FaceID or Fingerprint data is used to unlock your specific voting session.',
+    voteDetails: 'Your digital ballot is a private workspace. Once you make a selection, the system generates a cryptographic hash. This hash represents your choice but cannot be reversed to reveal the selection by anyone, including election officials, until the tally phase begins.',
+    secureDetails: 'Every vote is recorded as a block on a private, permissioned blockchain. Each province operates multiple validator nodes to ensure that the ledger is immutable. You can use your unique Transaction Hash to verify that your vote was counted in the final tally without revealing your choice.'
+  },
+  NE: {
+    heroTitle: 'राष्ट्रको आवाज, तपाईको मतदानको शक्ति २०२५।',
+    heroSub: '२०२५ को आम निर्वाचन: प्रत्येक नेपाली नागरिकका लागि सुरक्षित, पारदर्शी र सुलभ डिजिटल मतदान।',
+    startVoting: 'मतदान प्रक्रिया सुरु गर्नुहोस्',
+    verifyTitle: 'मतदाता प्रमाणीकरण',
+    enterVoterId: 'तपाईको १०-अंकको मतदाता परिचयपत्र नम्बर हाल्नुहोस्',
+    idPlaceholder: 'जस्तै: १२३४५६७८९०',
+    validate: 'परिचय प्रमाणित गर्नुहोस्',
+    otpTitle: 'सुरक्षा प्रमाणीकरण',
+    otpSub: 'तपाईको दर्ता गरिएको मोबाइल नम्बरमा ६-अंकको कोड पठाइएको छ।',
+    resendOtp: 'ओटिपी पुन: पठाउनुहोस्',
+    wait: 'पर्खनुहोस्',
+    verifyOtp: 'प्रमाणित गर्नुहोस् र अगाडि बढ्नुहोस्',
+    ballotTitle: 'डिजिटल मतपत्र',
+    ballotSub: 'कृपया एक दल वा उम्मेदवार छान्नुहोस्। तपाईको छनोट गोप्य रहनेछ।',
+    confirmVote: 'तपाईको मतदान पुष्टि गर्नुहोस्',
+    castVote: 'मतदान गर्नुहोस्',
+    cancel: 'फिर्ता जानुहोस्',
+    successTitle: 'मतदान सफल भयो!',
+    successSub: 'तपाईको मत सुरक्षित रूपमा रेकर्ड गरिएको छ। लोकतन्त्रमा सहभागी हुनुभएकोमा धन्यवाद।',
+    receiptBtn: 'डिजिटल रसिद डाउनलोड गर्नुहोस्',
+    resultsTitle: 'प्रत्यक्ष निर्वाचन अनुगमन',
+    integrityStatus: 'ब्लकचेन नेटवर्क: सुरक्षित छ',
+    turnout: 'राष्ट्रिय मतदान प्रतिशत',
+    exploreResults: 'प्रत्यक्ष ड्यासबोर्ड हेर्नुहोस्',
+    howItWorks: 'यसले कसरी काम गर्छ',
+    step1: 'पहिचान',
+    step1Desc: 'आफ्नो मतदाता विवरणहरू प्रविष्ट गर्नुहोस्।',
+    step2: 'प्रमाणीकरण',
+    step2Desc: 'ओटिपी वा फेसआईडी मार्फत प्रमाणित गर्नुहोस्।',
+    step3: 'मतदान',
+    step3Desc: 'पूर्ण गोपनीयताका साथ मतदान गर्नुहोस्।',
+    step4: 'सुरक्षित',
+    step4Desc: 'तपाईको मत सुरक्षित लेजरमा रेकर्ड हुन्छ।',
+    identifyDetails: 'लोकतान्त्रिक अखण्डता सुनिश्चित गर्न, प्रत्येक मतदाताले आफ्नो नागरिकता प्रमाणपत्रमा लिङ्क गरिएको प्रमाणित १०-अंकको मतदाता परिचयपत्र उपलब्ध गराउनुपर्छ।',
+    authenticateDetails: 'रिमोट भोटिङका लागि बहु-कारक प्रमाणीकरण (MFA) अनिवार्य छ। हामी तपाईंको दर्ता गरिएको मोबाइल नम्बर (OTP) लाई वास्तविक-समय बायोमेट्रिक प्रमाणीकरणसँग जोड्छौं।',
+    voteDetails: 'तपाईको डिजिटल मतपत्र एक निजी कार्यक्षेत्र हो। तपाईंले छनोट गरेपछि, प्रणालीले क्रिप्टोग्राफिक ह्यास उत्पन्न गर्छ।',
+    secureDetails: 'हरेक मतलाई निजी, अनुमति दिइएको ब्लकचेनमा ब्लकको रूपमा रेकर्ड गरिन्छ। प्रत्येक प्रदेशले लेजर अपरिवर्तनीय छ भन्ने सुनिश्चित गर्न बहु प्रमाणक नोडहरू सञ्चालन गर्दछ।'
+  }
+};

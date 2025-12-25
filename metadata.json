@@ -1,0 +1,7 @@
+{
+  "name": "Matdaan - Nepal Digital Voting Portal",
+  "description": "A secure, modern, and transparent digital voting platform for Nepal featuring 3D visuals, blockchain-backed integrity, and bilingual support. Built with React, Three.js, and Framer Motion.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
