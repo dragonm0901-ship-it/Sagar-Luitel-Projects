@@ -106,7 +106,22 @@ export const TRANSLATIONS = {
     identifyDetails: 'To ensure democratic integrity, every voter must provide a verified 10-digit Voter ID linked to their Citizenship certificate. Our system uses advanced zero-knowledge encryption to match your record against the National Identity Database without storing your personal identity alongside your vote.',
     authenticateDetails: 'Multi-factor authentication (MFA) is mandatory for remote voting. We combine your registered mobile number (OTP) with real-time biometric verification. For users on mobile devices, FaceID or Fingerprint data is used to unlock your specific voting session.',
     voteDetails: 'Your digital ballot is a private workspace. Once you make a selection, the system generates a cryptographic hash. This hash represents your choice but cannot be reversed to reveal the selection by anyone, including election officials, until the tally phase begins.',
-    secureDetails: 'Every vote is recorded as a block on a private, permissioned digital ledger. Each province operates multiple validator nodes to ensure that the ledger is immutable. You can use your unique Transaction Hash to verify that your vote was counted in the final tally without revealing your choice.'
+    secureDetails: 'Every vote is recorded as a block on a private, permissioned digital ledger. Each province operates multiple validator nodes to ensure that the ledger is immutable. You can use your unique Transaction Hash to verify that your vote was counted in the final tally without revealing your choice.',
+    trustTitle1: 'Certified Secure',
+    trustDesc1: 'End-to-end encrypted protocol verified by the National Security Agency.',
+    trustTitle2: 'Universal Access',
+    trustDesc2: 'Accessible from any location within verified Nepalese IP ranges.',
+    liveStatus: 'Verified voters currently in session',
+    auditTitle: 'System Audit Log',
+    auditSub: 'Real-time cryptographic verification of ledger activities.',
+    capTitle: 'Digital Democracy Framework',
+    capSub: 'Built on three core principles of the 2025 Digital Nepal initiative.',
+    cap1Title: 'Identity Sovereignty',
+    cap1Desc: 'Decoupled identity verification ensures privacy while preventing double-voting.',
+    cap2Title: 'Global Resilience',
+    cap2Desc: 'Highly available server clusters across 7 provinces and international nodes.',
+    cap3Title: 'Total Transparency',
+    cap3Desc: 'Every action is hashed and recorded on an immutable system for post-election audit.'
   },
   NE: {
     heroTitle: 'राष्ट्रको आवाज, तपाईको मतदानको शक्ति २०२५।',
@@ -145,6 +160,21 @@ export const TRANSLATIONS = {
     identifyDetails: 'लोकतान्त्रिक अखण्डता सुनिश्चित गर्न, प्रत्येक मतदाताले आफ्नो नागरिकता प्रमाणपत्रमा लिङ्क गरिएको प्रमाणित १०-अंकको मतदाता परिचयपत्र उपलब्ध गराउनुपर्छ।',
     authenticateDetails: 'रिमोट भोटिङका लागि बहु-कारक प्रमाणीकरण (MFA) अनिवार्य छ। हामी तपाईंको दर्ता गरिएको मोबाइल नम्बर (OTP) लाई वास्तविक-समय बायोमेट्रिक प्रमाणीकरणसँग जोड्छौं।',
     voteDetails: 'तपाईको डिजिटल मतपत्र एक निजी कार्यक्षेत्र हो। तपाईंले छनोट गरेपछि, प्रणालीले क्रिप्टोग्राफिक ह्यास उत्पन्न गर्छ।',
-    secureDetails: 'हरेक मतलाई निजी, सुरक्षित डिजिटल लेजरमा ब्लकको रूपमा रेकर्ड गरिन्छ। प्रत्येक प्रदेशले लेजर अपरिवर्तनीय छ भन्ने सुनिश्चित गर्न बहु प्रमाणक नोडहरू सञ्चालन गर्दछ।'
+    secureDetails: 'हरेक मतलाई निजी, सुरक्षित डिजिटल लेजरमा ब्लकको रूपमा रेकर्ड गरिन्छ। प्रत्येक प्रदेशले लेजर अपरिवर्तनीय छ भन्ने सुनिश्चित गर्न बहु प्रमाणक नोडहरू सञ्चालन गर्दछ।',
+    trustTitle1: 'प्रमाणित सुरक्षित',
+    trustDesc1: 'राष्ट्रिय सुरक्षा एजेन्सीद्वारा प्रमाणित इन्ड-टु-इन्ड एन्क्रिप्टेड प्रोटोकल।',
+    trustTitle2: 'विश्वव्यापी पहुँच',
+    trustDesc2: 'प्रमाणित नेपाली आईपी दायराहरू भित्र कुनै पनि स्थानबाट पहुँचयोग्य।',
+    liveStatus: 'प्रमाणित मतदाताहरू अहिले सत्रमा छन्',
+    auditTitle: 'प्रणाली अडिट लग',
+    auditSub: 'लेजर गतिविधिहरूको वास्तविक-समय क्रिप्टोग्राफिक प्रमाणीकरण।',
+    capTitle: 'डिजिटल लोकतन्त्र ढाँचा',
+    capSub: '२०२५ को डिजिटल नेपाल पहलका तीन मुख्य सिद्धान्तहरूमा निर्मित।',
+    cap1Title: 'पहिचान सार्वभौमसत्ता',
+    cap1Desc: 'गोपनीयतामा सम्झौता नगरी प्रत्येक मत एक अद्वितीय नागरिकसँग जोडिएको छ।',
+    cap2Title: 'विश्वव्यापी लचिलोपन',
+    cap2Desc: '७ वटा प्रदेशहरू र अन्तर्राष्ट्रिय नोडहरूमा उच्च उपलब्ध सर्भर क्लस्टरहरू।',
+    cap3Title: 'पूर्ण पारदर्शिता',
+    cap3Desc: 'हरेक कार्य अपरिवर्तनीय प्रणालीमा रेकर्ड गरिन्छ।'
   }
 };

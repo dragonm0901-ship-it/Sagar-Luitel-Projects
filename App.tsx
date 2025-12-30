@@ -9,7 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, ShieldCheck, Fingerprint, Lock, Eye, EyeOff,
   CheckCircle2, Download, Info, AlertTriangle, ChevronRight, Activity,
-  Globe, Smartphone, Shield, History, RefreshCw, Vote, ArrowLeft, Volume2, Loader2
+  Globe, Smartphone, Shield, History, RefreshCw, Vote, ArrowLeft, Volume2, Loader2,
+  Cpu, Award, Headphones, Monitor, Zap, Server, FileText, Search, Users
 } from 'lucide-react';
 import { GoogleGenAI, Modality } from "@google/genai";
 
@@ -213,7 +214,7 @@ const App: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-24"
+              className="space-y-16"
             >
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-8">
@@ -251,9 +252,115 @@ const App: React.FC = () => {
                       {t.exploreResults}
                     </button>
                   </div>
+
+                  {/* TRUST & TRANSPARENCY SECTION */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="space-y-8 mt-12"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="glass p-5 rounded-[2rem] border-l-4 border-red-600 shadow-xl shadow-red-900/10 hover:border-white/20 transition-all">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="p-2 bg-red-600/20 rounded-xl text-red-500">
+                            <ShieldCheck size={24} />
+                          </div>
+                          <span className="font-black text-xs uppercase tracking-widest text-white">{t.trustTitle1}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                          {t.trustDesc1}
+                        </p>
+                      </div>
+
+                      <div className="glass p-5 rounded-[2rem] border-l-4 border-blue-600 shadow-xl shadow-blue-900/10 hover:border-white/20 transition-all">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="p-2 bg-blue-600/20 rounded-xl text-blue-500">
+                            <Globe size={24} />
+                          </div>
+                          <span className="font-black text-xs uppercase tracking-widest text-white">{t.trustTitle2}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                          {t.trustDesc2}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-6 p-4 rounded-3xl bg-white/[0.02] border border-white/5">
+                      <div className="flex -space-x-3">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <div key={i} className="w-10 h-10 rounded-full border-4 border-slate-950 bg-slate-800 flex items-center justify-center overflow-hidden ring-1 ring-white/10">
+                            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 20}`} alt="voter avatar" />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+                           <span className="text-xs font-black text-white uppercase tracking-tighter">Live Session Traffic</span>
+                        </div>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                          14,204 {t.liveStatus}
+                        </p>
+                      </div>
+                      <div className="sm:ml-auto flex items-center gap-3 text-slate-600 border-l border-white/5 pl-6 hidden sm:flex">
+                        <Monitor size={18} className="hover:text-white transition-colors cursor-help" aria-label="Desktop Optimized" />
+                        <Smartphone size={18} className="hover:text-white transition-colors cursor-help" aria-label="Mobile Ready" />
+                        <Headphones size={18} className="hover:text-white transition-colors cursor-help" aria-label="Audio Narration Enabled" />
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
                 <HeroVisual />
               </div>
+
+              {/* INFORMATIVE ELEMENTS SECTION */}
+              <section className="pb-6 space-y-12" aria-labelledby="capabilities-title">
+                <div className="max-w-3xl mx-auto text-center space-y-4">
+                  <h2 id="capabilities-title" className="text-4xl font-black tracking-tight">{t.capTitle}</h2>
+                  <p className="text-slate-400 text-lg">{t.capSub}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="glass p-10 rounded-[2.5rem] border-white/5 hover:border-red-500/30 transition-all group"
+                  >
+                    <div className="w-16 h-16 bg-red-600/10 rounded-2xl flex items-center justify-center text-red-500 mb-6 group-hover:scale-110 transition-transform">
+                      <Users size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">{t.cap1Title}</h3>
+                    <p className="text-slate-400 text-sm leading-relaxed">{t.cap1Desc}</p>
+                  </motion.div>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 }}
+                    className="glass p-10 rounded-[2.5rem] border-white/5 hover:border-blue-500/30 transition-all group"
+                  >
+                    <div className="w-16 h-16 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 mb-6 group-hover:scale-110 transition-transform">
+                      <Zap size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">{t.cap2Title}</h3>
+                    <p className="text-slate-400 text-sm leading-relaxed">{t.cap2Desc}</p>
+                  </motion.div>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                    className="glass p-10 rounded-[2.5rem] border-white/5 hover:border-green-500/30 transition-all group"
+                  >
+                    <div className="w-16 h-16 bg-green-600/10 rounded-2xl flex items-center justify-center text-green-500 mb-6 group-hover:scale-110 transition-transform">
+                      <Award size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">{t.cap3Title}</h3>
+                    <p className="text-slate-400 text-sm leading-relaxed">{t.cap3Desc}</p>
+                  </motion.div>
+                </div>
+              </section>
 
               {/* How it Works Section */}
               <section className="space-y-12" aria-labelledby="how-it-works-title">
@@ -326,7 +433,7 @@ const App: React.FC = () => {
             </motion.div>
           )}
 
-          {/* DETAIL PAGES */}
+          {/* Other stages (VERIFY, OTP, BALLOT, etc.) remain the same */}
           {stage === VotingStage.DETAIL_IDENTIFY && (
             <DetailPage title={t.step1} content={t.identifyDetails} icon={<Fingerprint size={40} />} />
           )}
@@ -340,7 +447,6 @@ const App: React.FC = () => {
             <DetailPage title={t.step4} content={t.secureDetails} icon={<Shield size={40} />} />
           )}
 
-          {/* VERIFY STAGE */}
           {stage === VotingStage.VERIFY && (
             <motion.div 
               key="verify"
@@ -410,7 +516,6 @@ const App: React.FC = () => {
             </motion.div>
           )}
 
-          {/* OTP STAGE */}
           {stage === VotingStage.OTP && (
             <motion.div 
               key="otp"
@@ -467,7 +572,6 @@ const App: React.FC = () => {
             </motion.div>
           )}
 
-          {/* BALLOT STAGE */}
           {stage === VotingStage.BALLOT && (
             <motion.div 
               key="ballot"
@@ -493,10 +597,16 @@ const App: React.FC = () => {
                     onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSelectedParty(party)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    animate={{ 
+                      scale: selectedParty?.id === party.id ? 1.05 : 1,
+                      boxShadow: selectedParty?.id === party.id 
+                        ? "0 25px 50px -12px rgba(220, 20, 60, 0.25)" 
+                        : "0 0px 0px 0px rgba(0, 0, 0, 0)"
+                    }}
                     onClick={() => setSelectedParty(party)}
                     className={`cursor-pointer p-8 rounded-[2.5rem] border-2 transition-all group relative overflow-hidden ${
                       selectedParty?.id === party.id 
-                        ? 'border-red-500 bg-red-500/10 shadow-lg shadow-red-500/10' 
+                        ? 'border-red-500 bg-red-500/10' 
                         : 'border-white/5 glass hover:border-white/20'
                     }`}
                   >
@@ -552,7 +662,6 @@ const App: React.FC = () => {
             </motion.div>
           )}
 
-          {/* CONFIRMING / ANIMATION STAGE */}
           {stage === VotingStage.CONFIRMING && (
             <motion.div 
               key="confirming"
@@ -588,7 +697,6 @@ const App: React.FC = () => {
             </motion.div>
           )}
 
-          {/* SUCCESS STAGE */}
           {stage === VotingStage.SUCCESS && (
             <motion.div 
               key="success"
@@ -635,7 +743,6 @@ const App: React.FC = () => {
             </motion.div>
           )}
 
-          {/* RESULTS DASHBOARD */}
           {stage === VotingStage.RESULTS && (
             <motion.div 
               key="results"
@@ -677,7 +784,96 @@ const App: React.FC = () => {
                   </p>
                 </div>
                 <div className="flex-shrink-0 ml-auto">
-                   <button aria-label="View Audit Log" className="px-6 py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold hover:bg-white/10 transition-colors">Audit Log</button>
+                   <button 
+                    onClick={() => setStage(VotingStage.AUDIT_LOG)}
+                    aria-label="View Audit Log" 
+                    className="px-6 py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold hover:bg-white/10 transition-colors"
+                   >
+                    Audit Log
+                   </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {stage === VotingStage.AUDIT_LOG && (
+            <motion.div 
+              key="audit-log"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="space-y-8"
+            >
+              <button 
+                onClick={() => setStage(VotingStage.RESULTS)}
+                className="flex items-center gap-2 text-blue-400 hover:text-white transition-colors group mb-4"
+              >
+                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                Back to Results
+              </button>
+              
+              <div className="glass p-10 rounded-[3rem] border-white/10">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+                  <div>
+                    <h2 className="text-4xl font-black mb-2">{t.auditTitle}</h2>
+                    <p className="text-slate-400">{t.auditSub}</p>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="relative">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                      <input 
+                        type="text" 
+                        placeholder="Search Tx Hash..." 
+                        className="bg-slate-900/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-64"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4 font-mono text-xs overflow-x-auto">
+                  <table className="w-full text-left min-w-[800px]">
+                    <thead>
+                      <tr className="text-slate-500 border-b border-white/5 pb-4">
+                        <th className="py-4 font-bold uppercase tracking-wider">Timestamp</th>
+                        <th className="py-4 font-bold uppercase tracking-wider">Event ID</th>
+                        <th className="py-4 font-bold uppercase tracking-wider">Action</th>
+                        <th className="py-4 font-bold uppercase tracking-wider">Status</th>
+                        <th className="py-4 font-bold uppercase tracking-wider">Node Signature</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {[
+                        { time: '10:44:02', id: 'TX-882190', action: 'Block #124,009 Finalized', status: 'Verified', sig: '0x2a..f1' },
+                        { time: '10:43:55', id: 'TX-882189', action: 'Provisional Tally Updated (Koshi)', status: 'Success', sig: '0x9b..e4' },
+                        { time: '10:43:40', id: 'SYS-502', action: 'Node Cluster Sync Complete', status: 'Healthy', sig: '0x1c..a2' },
+                        { time: '10:42:15', id: 'TX-882188', action: 'Biometric Hash Decrypted', status: 'Verified', sig: '0x7e..f9' },
+                        { time: '10:41:59', id: 'TX-882187', action: 'New Vote Entry Recorded', status: 'Finalized', sig: '0x3d..c1' },
+                        { time: '10:41:02', id: 'TX-882186', action: 'Block #124,008 Finalized', status: 'Verified', sig: '0x2a..f1' },
+                        { time: '10:40:44', id: 'SYS-104', action: 'Network Protocol Refresh', status: 'Active', sig: '0x4f..b2' },
+                      ].map((log, i) => (
+                        <tr key={i} className="hover:bg-white/5 transition-colors">
+                          <td className="py-4 text-slate-400">{new Date().toISOString().split('T')[0]} {log.time}</td>
+                          <td className="py-4 text-blue-400">{log.id}</td>
+                          <td className="py-4 text-white font-bold">{log.action}</td>
+                          <td className="py-4">
+                            <span className="px-2 py-1 bg-green-500/20 text-green-500 rounded-md font-bold">{log.status}</span>
+                          </td>
+                          <td className="py-4 text-slate-500">{log.sig}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="mt-10 pt-10 border-t border-white/5 flex justify-between items-center text-xs text-slate-500">
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1"><Server size={14} /> Active Nodes: 77/77</span>
+                    <span className="flex items-center gap-1"><Cpu size={14} /> Latency: 4ms</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 bg-white/5 rounded hover:bg-white/10">Export CSV</button>
+                    <button className="px-3 py-1 bg-white/5 rounded hover:bg-white/10">View Raw JSON</button>
+                  </div>
                 </div>
               </div>
             </motion.div>
