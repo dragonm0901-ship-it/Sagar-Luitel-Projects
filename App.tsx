@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
 import { HeroVisual, BallotBoxAnimation, PartyLogo3D } from './components/ThreeDScene';
 import Dashboard from './components/Dashboard';
@@ -9,8 +9,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, ShieldCheck, Fingerprint, Lock, Eye, EyeOff,
   CheckCircle2, Download, Info, AlertTriangle, ChevronRight, Activity,
-  Globe, Smartphone, Shield, History, RefreshCw, Vote, ArrowLeft
+  Globe, Smartphone, Shield, History, RefreshCw, Vote, ArrowLeft, Volume2, Loader2
 } from 'lucide-react';
+import { GoogleGenAI, Modality } from "@google/genai";
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>(Language.EN);
@@ -22,8 +23,10 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
+  const [playingAudio, setPlayingAudio] = useState<string | null>(null);
 
   const t = TRANSLATIONS[lang];
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     let interval: any;
@@ -43,6 +46,77 @@ const App: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [stage]);
+
+  const decode = (base64: string) => {
+    const binaryString = atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes;
+  };
+
+  async function decodeAudioData(
+    data: Uint8Array,
+    ctx: AudioContext,
+    sampleRate: number,
+    numChannels: number,
+  ): Promise<AudioBuffer> {
+    const dataInt16 = new Int16Array(data.buffer);
+    const frameCount = dataInt16.length / numChannels;
+    const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
+
+    for (let channel = 0; channel < numChannels; channel++) {
+      const channelData = buffer.getChannelData(channel);
+      for (let i = 0; i < frameCount; i++) {
+        channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
+      }
+    }
+    return buffer;
+  }
+
+  const narrateStep = async (title: string, desc: string) => {
+    if (playingAudio === title) return;
+    setPlayingAudio(title);
+
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const prompt = lang === Language.EN 
+        ? `Narrate the following voting step clearly: ${title}. Description: ${desc}`
+        : `कृपया यो मतदान चरण स्पष्ट रूपमा वर्णन गर्नुहोस्: ${title}। विवरण: ${desc}`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash-preview-tts",
+        contents: [{ parts: [{ text: prompt }] }],
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: lang === Language.EN ? 'Kore' : 'Kore' },
+            },
+          },
+        },
+      });
+
+      const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if (base64Audio) {
+        if (!audioContextRef.current) {
+          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        }
+        const ctx = audioContextRef.current;
+        const audioBuffer = await decodeAudioData(decode(base64Audio), ctx, 24000, 1);
+        const source = ctx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(ctx.destination);
+        source.onended = () => setPlayingAudio(null);
+        source.start();
+      }
+    } catch (error) {
+      console.error("Audio narration failed:", error);
+      setPlayingAudio(null);
+    }
+  };
 
   const startVerify = () => setStage(VotingStage.VERIFY);
   
@@ -97,13 +171,14 @@ const App: React.FC = () => {
     >
       <button 
         onClick={() => setStage(VotingStage.LANDING)}
+        aria-label="Back to overview"
         className="flex items-center gap-2 text-blue-400 hover:text-white transition-colors mb-8 group"
       >
-        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" aria-hidden="true" />
         Back to Overview
       </button>
-      <div className="glass p-12 rounded-[3rem] space-y-8">
-        <div className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center text-blue-500">
+      <div className="glass p-12 rounded-[3rem] space-y-8" role="article">
+        <div className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center text-blue-500" aria-hidden="true">
           {icon}
         </div>
         <h2 className="text-4xl font-bold">{title}</h2>
@@ -128,7 +203,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden selection:bg-red-500/30">
       <Header lang={lang} setLang={setLang} onGoHome={() => setStage(VotingStage.LANDING)} />
 
-      <main className="pt-24 pb-20 px-6 max-w-7xl mx-auto">
+      <main className="pt-24 pb-20 px-6 max-w-7xl mx-auto" id="main-content">
         <AnimatePresence mode="wait">
           
           {/* LANDING STAGE */}
@@ -147,7 +222,7 @@ const App: React.FC = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-semibold"
                   >
-                    <ShieldCheck size={16} />
+                    <ShieldCheck size={16} aria-hidden="true" />
                     <span>General Election 2025</span>
                   </motion.div>
                   <h1 className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
@@ -161,14 +236,16 @@ const App: React.FC = () => {
                   <div className="flex flex-wrap gap-4">
                     <button 
                       onClick={startVerify}
+                      aria-label={t.startVoting}
                       className="group relative px-8 py-4 bg-red-600 rounded-2xl font-bold text-lg overflow-hidden transition-all hover:bg-red-700 active:scale-95 shadow-xl shadow-red-900/30"
                     >
                       <span className="relative z-10 flex items-center gap-2">
-                        {t.startVoting} <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                        {t.startVoting} <ArrowRight className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                       </span>
                     </button>
                     <button 
                       onClick={() => setStage(VotingStage.RESULTS)}
+                      aria-label={t.exploreResults}
                       className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-bold text-lg hover:bg-white/10 transition-all backdrop-blur-md"
                     >
                       {t.exploreResults}
@@ -179,10 +256,10 @@ const App: React.FC = () => {
               </div>
 
               {/* How it Works Section */}
-              <div className="space-y-12">
+              <section className="space-y-12" aria-labelledby="how-it-works-title">
                 <div className="text-center">
-                  <h2 className="text-3xl font-bold mb-4">{t.howItWorks}</h2>
-                  <div className="w-20 h-1 bg-red-600 mx-auto rounded-full" />
+                  <h2 id="how-it-works-title" className="text-3xl font-bold mb-4">{t.howItWorks}</h2>
+                  <div className="w-20 h-1 bg-red-600 mx-auto rounded-full" aria-hidden="true" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
@@ -193,25 +270,43 @@ const App: React.FC = () => {
                   ].map((step, i) => (
                     <motion.div 
                       key={i}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Step ${i + 1}: ${step.title}. ${step.desc}`}
+                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setStage(step.stage)}
                       whileHover={{ y: -10, borderColor: 'rgba(59, 130, 246, 0.5)' }}
-                      onClick={() => setStage(step.stage)}
-                      className="glass p-8 rounded-3xl border-white/5 transition-all text-center cursor-pointer group"
+                      className="glass p-8 rounded-3xl border-white/5 transition-all text-center cursor-pointer group relative"
                     >
-                      <div className="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-500 group-hover:scale-110 transition-transform">
+                      <button 
+                        aria-label={`Listen to narration for ${step.title}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          narrateStep(step.title, step.desc);
+                        }}
+                        className="absolute top-4 right-4 p-2 bg-white/5 hover:bg-white/20 rounded-full transition-colors z-20"
+                      >
+                        {playingAudio === step.title ? (
+                          <Loader2 className="animate-spin text-blue-500" size={16} />
+                        ) : (
+                          <Volume2 size={16} className="text-slate-400 group-hover:text-blue-400" />
+                        )}
+                      </button>
+                      
+                      <div onClick={() => setStage(step.stage)} className="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-500 group-hover:scale-110 transition-transform" aria-hidden="true">
                         {step.icon}
                       </div>
-                      <h3 className="text-lg font-bold mb-2 group-hover:text-blue-400 transition-colors">{step.title}</h3>
-                      <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
-                      <div className="mt-4 text-xs font-bold text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">Learn More →</div>
+                      <h3 onClick={() => setStage(step.stage)} className="text-lg font-bold mb-2 group-hover:text-blue-400 transition-colors">{step.title}</h3>
+                      <p onClick={() => setStage(step.stage)} className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                      <div onClick={() => setStage(step.stage)} className="mt-4 text-xs font-bold text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">Learn More →</div>
                     </motion.div>
                   ))}
                 </div>
-              </div>
+              </section>
 
               {/* Live Status Ticker */}
-              <div className="glass p-8 rounded-3xl overflow-hidden relative">
+              <div className="glass p-8 rounded-3xl overflow-hidden relative" role="status" aria-label="Election Live Statistics">
                 <div className="absolute top-0 right-0 p-4">
-                  <Activity className="text-red-500 animate-pulse" />
+                  <Activity className="text-red-500 animate-pulse" aria-hidden="true" />
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 text-center divide-x divide-white/5">
                   <div className="space-y-1">
@@ -254,10 +349,10 @@ const App: React.FC = () => {
               exit={{ opacity: 0, scale: 0.95 }}
               className="max-w-xl mx-auto py-12"
             >
-              <div className="glass p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden border-white/10">
+              <div className="glass p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden border-white/10" role="form" aria-labelledby="verify-title">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 blur-3xl -z-10" />
                 {loading ? (
-                   <div className="space-y-10 py-10">
+                   <div className="space-y-10 py-10" role="status" aria-live="polite">
                       <div className="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
                         <Activity className="text-blue-500 animate-spin" size={40} />
                       </div>
@@ -270,10 +365,10 @@ const App: React.FC = () => {
                 ) : (
                   <>
                     <div className="mb-8 text-center">
-                      <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-4" aria-hidden="true">
                         <Fingerprint className="text-blue-500" size={32} />
                       </div>
-                      <h2 className="text-3xl font-bold mb-2">{t.verifyTitle}</h2>
+                      <h2 id="verify-title" className="text-3xl font-bold mb-2">{t.verifyTitle}</h2>
                       <p className="text-slate-400">{t.enterVoterId}</p>
                     </div>
                     <div className="space-y-6">
@@ -284,10 +379,12 @@ const App: React.FC = () => {
                           value={voterId}
                           onChange={(e) => setVoterId(e.target.value.replace(/\D/g, ''))}
                           placeholder={t.idPlaceholder}
+                          aria-label="Voter ID Number"
                           className="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-6 py-4 text-2xl tracking-[0.2em] font-mono focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-700 pr-16"
                         />
                         <button 
                           onClick={() => setVoterIdVisible(!voterIdVisible)}
+                          aria-label={voterIdVisible ? "Hide Voter ID" : "Show Voter ID"}
                           className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
                         >
                           {voterIdVisible ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -298,7 +395,7 @@ const App: React.FC = () => {
                         onClick={validateVoter}
                         className="w-full py-5 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl font-bold text-lg hover:shadow-xl hover:shadow-blue-900/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                       >
-                        {t.validate} <ChevronRight size={20} />
+                        {t.validate} <ChevronRight size={20} aria-hidden="true" />
                       </button>
                       <button 
                         onClick={() => setStage(VotingStage.LANDING)}
@@ -322,19 +419,19 @@ const App: React.FC = () => {
               exit={{ opacity: 0, x: -20 }}
               className="max-w-xl mx-auto py-12"
             >
-              <div className="glass p-10 rounded-[2.5rem] shadow-2xl relative">
+              <div className="glass p-10 rounded-[2.5rem] shadow-2xl relative" role="form" aria-labelledby="otp-title">
                 {loading ? (
-                  <div className="py-12 space-y-6 text-center">
+                  <div className="py-12 space-y-6 text-center" role="status" aria-live="polite">
                     <RefreshCw className="mx-auto text-red-500 animate-spin" size={48} />
                     <p className="font-mono text-sm text-red-400">{loadingText}</p>
                   </div>
                 ) : (
                   <>
                     <div className="mb-8 text-center">
-                      <h2 className="text-3xl font-bold mb-2">{t.otpTitle}</h2>
+                      <h2 id="otp-title" className="text-3xl font-bold mb-2">{t.otpTitle}</h2>
                       <p className="text-slate-400 text-sm">{t.otpSub}</p>
                     </div>
-                    <div className="flex justify-between gap-2 mb-8">
+                    <div className="flex justify-between gap-2 mb-8" aria-label="Enter 6-digit OTP code">
                       {otp.map((digit, i) => (
                         <input 
                           key={i}
@@ -343,6 +440,7 @@ const App: React.FC = () => {
                           maxLength={1}
                           value={digit}
                           onChange={(e) => handleOtp(i, e.target.value)}
+                          aria-label={`OTP Digit ${i + 1}`}
                           className="w-12 h-16 md:w-16 md:h-20 bg-slate-900/50 border border-white/10 rounded-2xl text-center text-3xl font-bold focus:ring-2 focus:ring-red-500 outline-none transition-all"
                         />
                       ))}
@@ -377,16 +475,22 @@ const App: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="space-y-10"
+              role="region"
+              aria-labelledby="ballot-title"
             >
               <div className="text-center max-w-2xl mx-auto">
-                <h2 className="text-4xl font-black mb-4 tracking-tight">{t.ballotTitle}</h2>
+                <h2 id="ballot-title" className="text-4xl font-black mb-4 tracking-tight">{t.ballotTitle}</h2>
                 <p className="text-slate-400">{t.ballotSub}</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-24">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-24" role="radiogroup" aria-label="Candidate Selection">
                 {PARTIES.map((party) => (
                   <motion.div 
                     key={party.id}
+                    role="radio"
+                    aria-checked={selectedParty?.id === party.id}
+                    tabIndex={0}
+                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSelectedParty(party)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedParty(party)}
@@ -403,7 +507,7 @@ const App: React.FC = () => {
                       />
                     )}
                     <div className="flex flex-col items-center gap-4 mb-6 relative z-10 text-center">
-                      <div className="w-24 h-24 rounded-3xl bg-white/5 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform overflow-hidden">
+                      <div className="w-24 h-24 rounded-3xl bg-white/5 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform overflow-hidden" aria-hidden="true">
                         <PartyLogo3D type={party.symbol} color={party.color} />
                       </div>
                       <div>
@@ -420,7 +524,7 @@ const App: React.FC = () => {
                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
                          selectedParty?.id === party.id ? 'bg-red-500 border-red-500 scale-110' : 'border-white/20'
                        }`}>
-                         {selectedParty?.id === party.id && <CheckCircle2 size={20} className="text-white" />}
+                         {selectedParty?.id === party.id && <CheckCircle2 size={20} className="text-white" aria-hidden="true" />}
                        </div>
                     </div>
                   </motion.div>
@@ -437,9 +541,10 @@ const App: React.FC = () => {
                   >
                     <button 
                       onClick={() => setStage(VotingStage.CONFIRMING)}
+                      aria-label={`Confirm vote for ${lang === Language.EN ? selectedParty.nameEn : selectedParty.nameNe}`}
                       className="w-full max-w-xl py-5 bg-gradient-to-r from-red-600 to-red-800 rounded-2xl font-bold text-xl shadow-2xl shadow-red-950/50 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
                     >
-                      <Lock size={20} /> {t.confirmVote}
+                      <Lock size={20} aria-hidden="true" /> {t.confirmVote}
                     </button>
                   </motion.div>
                 )}
@@ -455,6 +560,8 @@ const App: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="text-center space-y-8 py-10"
+              role="status"
+              aria-live="polite"
             >
               <div className="max-w-md mx-auto">
                 <div className="glass p-12 rounded-[3rem] border-red-500/30">
@@ -462,10 +569,10 @@ const App: React.FC = () => {
                   <h3 className="text-2xl font-bold mb-4">Finalizing 2025 Transaction...</h3>
                   <div className="flex flex-col gap-2 items-center text-sm text-slate-500 font-mono">
                     <span className="flex items-center gap-2">
-                      <Lock size={14} className="text-blue-500" /> AES-256 Encryption
+                      <Lock size={14} className="text-blue-500" aria-hidden="true" /> AES-256 Encryption
                     </span>
                     <span className="flex items-center gap-2">
-                       <Shield size={14} className="text-green-500" /> Proof-of-Work Verification
+                       <Shield size={14} className="text-green-500" aria-hidden="true" /> Proof-of-Work Verification
                     </span>
                   </div>
                   <div className="mt-8 w-full bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -488,17 +595,19 @@ const App: React.FC = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="max-w-2xl mx-auto py-12 text-center"
+              role="status"
+              aria-labelledby="success-title"
             >
               <div className="glass p-12 rounded-[3rem] border-green-500/20 shadow-2xl shadow-green-900/10">
-                <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
+                <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce" aria-hidden="true">
                   <CheckCircle2 size={48} className="text-green-500" />
                 </div>
-                <h2 className="text-5xl font-black mb-4">{t.successTitle}</h2>
+                <h2 id="success-title" className="text-5xl font-black mb-4">{t.successTitle}</h2>
                 <p className="text-slate-400 text-lg mb-10">{t.successSub}</p>
                 
-                <div className="glass bg-slate-900/40 p-6 rounded-2xl mb-10 text-left space-y-3">
+                <div className="glass bg-slate-900/40 p-6 rounded-2xl mb-10 text-left space-y-3" aria-label="Digital Receipt Details">
                   <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-xs text-slate-500 font-bold uppercase tracking-tighter">Blockchain Receipt ID</span>
+                    <span className="text-xs text-slate-500 font-bold uppercase tracking-tighter">Secure Receipt ID</span>
                     <span className="text-xs text-blue-400 font-mono">0x2025...fE9D</span>
                   </div>
                   <div className="flex justify-between border-b border-white/5 pb-2">
@@ -512,8 +621,8 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold hover:bg-slate-100 transition-all">
-                    <Download size={20} /> {t.receiptBtn}
+                  <button aria-label={t.receiptBtn} className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold hover:bg-slate-100 transition-all">
+                    <Download size={20} aria-hidden="true" /> {t.receiptBtn}
                   </button>
                   <button 
                     onClick={() => setStage(VotingStage.RESULTS)}
@@ -537,8 +646,8 @@ const App: React.FC = () => {
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                   <h2 className="text-4xl font-black mb-2">{t.resultsTitle}</h2>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-full border border-green-500/20">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-full border border-green-500/20" role="status">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true" />
                     <span className="text-xs text-green-500 font-bold uppercase tracking-wider">{t.integrityStatus}</span>
                   </div>
                 </div>
@@ -556,8 +665,8 @@ const App: React.FC = () => {
 
               <Dashboard />
 
-              <div className="p-8 rounded-[3rem] glass bg-gradient-to-br from-blue-600/5 to-red-600/5 border border-white/10 flex flex-col md:flex-row gap-8 items-center">
-                <div className="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center flex-shrink-0">
+              <div className="p-8 rounded-[3rem] glass bg-gradient-to-br from-blue-600/5 to-red-600/5 border border-white/10 flex flex-col md:flex-row gap-8 items-center" role="complementary" aria-label="Privacy Information">
+                <div className="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
                   <History className="text-blue-500" size={40} />
                 </div>
                 <div className="space-y-2">
@@ -568,7 +677,7 @@ const App: React.FC = () => {
                   </p>
                 </div>
                 <div className="flex-shrink-0 ml-auto">
-                   <button className="px-6 py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold hover:bg-white/10">Audit Log</button>
+                   <button aria-label="View Audit Log" className="px-6 py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold hover:bg-white/10 transition-colors">Audit Log</button>
                 </div>
               </div>
             </motion.div>
@@ -577,22 +686,22 @@ const App: React.FC = () => {
         </AnimatePresence>
       </main>
 
-      <footer className="py-12 px-6 border-t border-white/5 bg-slate-950/80 backdrop-blur-md">
+      <footer className="py-12 px-6 border-t border-white/5 bg-slate-950/80 backdrop-blur-md" role="contentinfo">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
-             <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center shadow-lg">
+             <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center shadow-lg" aria-hidden="true">
                 <Vote size={18} className="text-white" />
              </div>
              <span className="font-bold tracking-tighter text-slate-200">MATDAAN 2025</span>
           </div>
-          <div className="flex gap-8 text-xs text-slate-500 font-bold uppercase tracking-widest">
+          <nav className="flex gap-8 text-xs text-slate-500 font-bold uppercase tracking-widest" aria-label="Footer links">
              <a href="#" className="hover:text-blue-400 transition-colors">Privacy</a>
              <a href="#" className="hover:text-blue-400 transition-colors">Commission</a>
              <a href="#" className="hover:text-blue-400 transition-colors">Security</a>
              <a href="#" className="hover:text-blue-400 transition-colors">Help</a>
-          </div>
+          </nav>
           <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 rounded-full border border-white/5">
-             <AlertTriangle size={14} className="text-yellow-500" />
+             <AlertTriangle size={14} className="text-yellow-500" aria-hidden="true" />
              <span className="text-[10px] font-bold text-slate-500 tracking-tight">SECURE GOVERNMENT DOMAIN</span>
           </div>
         </div>

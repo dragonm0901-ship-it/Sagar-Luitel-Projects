@@ -2,7 +2,6 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, MeshWobbleMaterial, Stars, Float as DreiFloat, Text } from '@react-three/drei';
-import * as THREE from 'thene';
 import * as THREE_LIB from 'three';
 
 // Define R3F elements as components to avoid JSX intrinsic element errors in some environments
@@ -71,7 +70,7 @@ const NepalMapMesh: React.FC = () => {
 
 export const HeroVisual: React.FC = () => {
   return (
-    <div className="w-full h-[350px] md:h-[550px]">
+    <div className="w-full h-[350px] md:h-[550px]" aria-hidden="true">
       <Canvas camera={{ position: [0, 0, 6], fov: 40 }}>
         <AmbientLight intensity={0.6} />
         <PointLight position={[10, 10, 10]} intensity={2} />
@@ -171,7 +170,7 @@ const RotatingLogo: React.FC<{ type: string; color: string }> = ({ type, color }
 // Component for 3D Party Logos
 export const PartyLogo3D: React.FC<{ type: string; color: string }> = ({ type, color }) => {
   return (
-    <Canvas style={{ height: '80px', width: '80px' }} camera={{ position: [0, 0, 2], fov: 40 }}>
+    <Canvas style={{ height: '80px', width: '80px' }} camera={{ position: [0, 0, 2], fov: 40 }} aria-hidden="true">
       <AmbientLight intensity={1} />
       <PointLight position={[2, 2, 2]} />
       <RotatingLogo type={type} color={color} />
@@ -181,7 +180,7 @@ export const PartyLogo3D: React.FC<{ type: string; color: string }> = ({ type, c
 
 export const BallotBoxAnimation: React.FC = () => {
   return (
-    <div className="w-full h-[300px]">
+    <div className="w-full h-[300px]" aria-hidden="true">
       <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
         <AmbientLight intensity={0.8} />
         <PointLight position={[5, 5, 5]} />

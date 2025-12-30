@@ -91,7 +91,7 @@ export const TRANSLATIONS = {
     successSub: 'Your 2025 General Election vote has been recorded on the secure ledger. Thank you for participating in democracy.',
     receiptBtn: 'Download Digital Receipt',
     resultsTitle: 'Live Election Monitoring',
-    integrityStatus: 'Blockchain Network: Synced & Secure',
+    integrityStatus: 'Secure Network: Synced & Secure',
     turnout: 'National Turnout',
     exploreResults: 'View Live Dashboard',
     howItWorks: 'How it Works',
@@ -106,7 +106,7 @@ export const TRANSLATIONS = {
     identifyDetails: 'To ensure democratic integrity, every voter must provide a verified 10-digit Voter ID linked to their Citizenship certificate. Our system uses advanced zero-knowledge encryption to match your record against the National Identity Database without storing your personal identity alongside your vote.',
     authenticateDetails: 'Multi-factor authentication (MFA) is mandatory for remote voting. We combine your registered mobile number (OTP) with real-time biometric verification. For users on mobile devices, FaceID or Fingerprint data is used to unlock your specific voting session.',
     voteDetails: 'Your digital ballot is a private workspace. Once you make a selection, the system generates a cryptographic hash. This hash represents your choice but cannot be reversed to reveal the selection by anyone, including election officials, until the tally phase begins.',
-    secureDetails: 'Every vote is recorded as a block on a private, permissioned blockchain. Each province operates multiple validator nodes to ensure that the ledger is immutable. You can use your unique Transaction Hash to verify that your vote was counted in the final tally without revealing your choice.'
+    secureDetails: 'Every vote is recorded as a block on a private, permissioned digital ledger. Each province operates multiple validator nodes to ensure that the ledger is immutable. You can use your unique Transaction Hash to verify that your vote was counted in the final tally without revealing your choice.'
   },
   NE: {
     heroTitle: 'राष्ट्रको आवाज, तपाईको मतदानको शक्ति २०२५।',
@@ -130,7 +130,7 @@ export const TRANSLATIONS = {
     successSub: 'तपाईको मत सुरक्षित रूपमा रेकर्ड गरिएको छ। लोकतन्त्रमा सहभागी हुनुभएकोमा धन्यवाद।',
     receiptBtn: 'डिजिटल रसिद डाउनलोड गर्नुहोस्',
     resultsTitle: 'प्रत्यक्ष निर्वाचन अनुगमन',
-    integrityStatus: 'ब्लकचेन नेटवर्क: सुरक्षित छ',
+    integrityStatus: 'सुरक्षित नेटवर्क: सुचारु छ',
     turnout: 'राष्ट्रिय मतदान प्रतिशत',
     exploreResults: 'प्रत्यक्ष ड्यासबोर्ड हेर्नुहोस्',
     howItWorks: 'यसले कसरी काम गर्छ',
@@ -145,6 +145,6 @@ export const TRANSLATIONS = {
     identifyDetails: 'लोकतान्त्रिक अखण्डता सुनिश्चित गर्न, प्रत्येक मतदाताले आफ्नो नागरिकता प्रमाणपत्रमा लिङ्क गरिएको प्रमाणित १०-अंकको मतदाता परिचयपत्र उपलब्ध गराउनुपर्छ।',
     authenticateDetails: 'रिमोट भोटिङका लागि बहु-कारक प्रमाणीकरण (MFA) अनिवार्य छ। हामी तपाईंको दर्ता गरिएको मोबाइल नम्बर (OTP) लाई वास्तविक-समय बायोमेट्रिक प्रमाणीकरणसँग जोड्छौं।',
     voteDetails: 'तपाईको डिजिटल मतपत्र एक निजी कार्यक्षेत्र हो। तपाईंले छनोट गरेपछि, प्रणालीले क्रिप्टोग्राफिक ह्यास उत्पन्न गर्छ।',
-    secureDetails: 'हरेक मतलाई निजी, अनुमति दिइएको ब्लकचेनमा ब्लकको रूपमा रेकर्ड गरिन्छ। प्रत्येक प्रदेशले लेजर अपरिवर्तनीय छ भन्ने सुनिश्चित गर्न बहु प्रमाणक नोडहरू सञ्चालन गर्दछ।'
+    secureDetails: 'हरेक मतलाई निजी, सुरक्षित डिजिटल लेजरमा ब्लकको रूपमा रेकर्ड गरिन्छ। प्रत्येक प्रदेशले लेजर अपरिवर्तनीय छ भन्ने सुनिश्चित गर्न बहु प्रमाणक नोडहरू सञ्चालन गर्दछ।'
   }
 };
